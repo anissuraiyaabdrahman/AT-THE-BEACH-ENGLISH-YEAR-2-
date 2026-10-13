@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffe4ef">
+  <title>LETS EXPLORE - At the Beach</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--pink:#ff8fbd;--dark:#ec609c;--ink:#59465e}
+    *{box-sizing:border-box}body{margin:0;font-family:Fredoka,sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 10%,#fff7fb,transparent 28%),radial-gradient(circle at 90% 80%,#ffeaf3,transparent 30%),#fff5fa;min-height:100vh}
+    button,input{font:inherit}button{touch-action:manipulation}
+    .cute-card{background:#ffffffed;border:3px solid #fff;border-radius:25px;box-shadow:0 8px 0 #f7d5e5,0 12px 25px #eaa8c622}
+    .cute-btn{border:3px solid white;border-radius:17px;padding:12px 19px;font-weight:700;cursor:pointer;box-shadow:0 5px 0 #b1558433;transition:all .3s ease}
+    .cute-btn:hover{transform:translateY(-3px) scale(1.02);filter:brightness(1.04)}.cute-btn:active{transform:translateY(2px)}
+    .pink-btn{color:white;background:linear-gradient(135deg,#ff91bd,#f26ba8)}.purple-btn{color:white;background:linear-gradient(135deg,#b9a0ff,#9b7cf0)}.yellow-btn{color:#765b2d;background:linear-gradient(135deg,#fff0a9,#ffd977)}.mint-btn{color:#347e79;background:linear-gradient(135deg,#c6f6e7,#94e7d0)}
+    .screen{display:none}.screen.active{display:block;animation:appear .4s ease}
+    @keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-9px) rotate(3deg)}}@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+    .float{animation:float 3s ease-in-out infinite}.beach-scene{position:relative;isolation:isolate;overflow:hidden;width:100%;min-height:350px;aspect-ratio:1.55/1;border:5px solid white;border-radius:25px;background:linear-gradient(to bottom,#a8e7ff 0%,#c9f1ff 31%,#65d5ec 31%,#9ce7f0 46%,#ffe6a9 46%,#ffdb91 100%);box-shadow:0 7px 0 #efc9da}
+    .beach-scene:before{content:"";position:absolute;z-index:-1;left:-5%;right:-5%;top:32%;height:16%;background:repeating-linear-gradient(175deg,#ffffffaa 0 9px,#ffffff00 9px 25px);border-radius:50%}
+    .sun{position:absolute;top:5%;right:9%;width:65px;height:65px;border-radius:50%;background:#ffe879;box-shadow:0 0 0 10px #ffe87933,0 0 35px #fff2a9}.cloud{position:absolute;color:white;font-size:clamp(30px,5vw,53px);opacity:.95}.palm{position:absolute;font-size:clamp(45px,8vw,90px);top:19%;left:2%;transform:rotate(-8deg)}.umbrella{position:absolute;font-size:clamp(54px,8vw,90px);left:19%;top:34%;transform:rotate(-7deg)}.castle{position:absolute;font-size:clamp(48px,7vw,78px);right:7%;bottom:9%}.crab{position:absolute;font-size:clamp(30px,5vw,48px);left:7%;bottom:7%}
+    .scene-object{position:absolute;z-index:5;display:flex;align-items:center;justify-content:center;width:clamp(37px,6vw,57px);height:clamp(37px,6vw,57px);padding:0;border:2px dashed #ffffffbb;border-radius:16px;background:#ffffff44;font-size:clamp(23px,4vw,38px);cursor:pointer;transition:all .25s ease;user-select:none}
+    .scene-object:hover{transform:scale(1.2) rotate(-6deg);background:#ffffffbb;box-shadow:0 4px 12px #6c4d6033}.scene-object.found{opacity:.25;pointer-events:none;filter:grayscale(1);transform:scale(.75)}.scene-object .hint-dot{position:absolute;right:-3px;top:-5px;width:11px;height:11px;border:2px solid white;border-radius:50%;background:#ff76aa}.scene-object.found .hint-dot{display:none}
+    .target-row{display:flex;align-items:center;gap:9px;min-width:0;padding:9px 11px;border:2px solid #f8dce9;border-radius:15px;background:#fff8fb;transition:all .25s}.target-row.done{background:#e5fff4;border-color:#9be8ca;opacity:.85}.target-icon{display:grid;place-items:center;flex-shrink:0;width:38px;height:38px;border-radius:12px;background:#ffe6f0;font-size:23px}.target-row.done .target-icon{background:#c6f6e5}
+    .inventory-item{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:2px solid #f2c7da;border-radius:12px;background:white;cursor:grab;user-select:none;transition:all .2s}.inventory-item:hover{transform:translateY(-2px)}.drop-zone{border:2px dashed #ee9fc2;border-radius:16px;background:#fff2f8;transition:all .25s}.drop-zone.drag-over{background:#e2fff3;border-color:#4ccba0;transform:scale(1.02)}
+    .life-heart{color:#f06b9f;transition:all .2s}.life-heart.lost{color:#e7d4de;transform:scale(.8)}
+    .modal-backdrop{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:18px;background:#4e344f88;backdrop-filter:blur(5px)}.modal-backdrop.show{display:flex}.modal-panel{width:min(100%,460px);max-height:88vh;overflow-y:auto;border:4px solid white;border-radius:27px;padding:25px;background:#fff8fc;box-shadow:0 12px 0 #e9bdd2;animation:pop .3s ease}
+    .toast{position:fixed;left:50%;bottom:22px;z-index:150;transform:translateX(-50%);background:#5c4562;color:white;padding:12px 20px;border-radius:14px;box-shadow:0 5px 15px #0002;opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}.toast.show{opacity:1}
+    .progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#ff92bf,#b49aff);transition:width .3s}
+    @media(max-width:640px){.beach-scene{min-height:330px;aspect-ratio:1/1}.cute-btn{padding:10px 14px}.modal-panel{padding:20px}}
+  </style>
+</head>
+<body>
+  <header class="max-w-7xl mx-auto px-4 pt-5 pb-3 flex items-center justify-between gap-3">
+    <button class="flex items-center gap-2 text-left" onclick="goHome()" aria-label="Go to home">
+      <span class="grid place-items-center w-12 h-12 rounded-2xl bg-pink-100 text-pink-500 text-2xl"><i class="fas fa-shell"></i></span>
+      <span><span class="block text-xl sm:text-2xl font-bold tracking-wide">LET'S EXPLORE!</span><span class="block text-xs sm:text-sm text-pink-500 font-semibold">🌴 Little Beach Adventure</span></span>
+    </button>
+    <div class="flex gap-2">
+      <button class="cute-btn yellow-btn !p-3" onclick="toggleSound()" id="soundToggle" title="Toggle sound"><i class="fas fa-volume-high"></i><span class="hidden sm:inline ml-1">Sound</span></button>
+      <button class="cute-btn purple-btn !p-3" onclick="openLeaderboard()"><i class="fas fa-trophy"></i><span class="hidden sm:inline ml-1">Scores</span></button>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 pb-10">
+    <section id="startScreen" class="screen active">
+      <div class="grid lg:grid-cols-2 gap-6 items-center mt-4">
+        <div class="cute-card p-6 sm:p-9 text-center lg:text-left">
+          <span class="inline-block rounded-full bg-yellow-100 text-yellow-700 px-4 py-2 font-bold text-sm mb-4">☀️ READY, EXPLORER?</span>
+          <h1 class="text-4xl sm:text-6xl font-bold leading-tight">LET'S <span class="text-pink-500">EXPLORE!</span></h1>
+          <p class="text-2xl sm:text-3xl font-semibold mt-2">🏖️ At the Beach</p>
+          <p class="text-lg mt-4 leading-relaxed">Let's find the hidden beach objects! Look carefully, collect them all, and become a beach superstar!</p>
+          <div class="flex flex-wrap gap-3 mt-6 justify-center lg:justify-start text-sm font-semibold">
+            <span class="rounded-xl bg-pink-50 px-3 py-2">❤️ 3 Lives</span><span class="rounded-xl bg-blue-50 px-3 py-2">⏱️ 60 Seconds</span><span class="rounded-xl bg-yellow-50 px-3 py-2">⭐ Earn Points</span>
+          </div>
+          <div class="mt-7 max-w-md mx-auto lg:mx-0">
+            <label for="playerName" class="block text-left font-bold mb-2">What's your name, explorer?</label>
+            <input id="playerName" maxlength="18" placeholder="Enter your name..." class="w-full rounded-2xl border-3 border-pink-200 bg-white px-4 py-3 text-lg outline-none focus:border-pink-400" style="border:3px solid #f5c5da">
+          </div>
+          <button class="cute-btn pink-btn text-xl mt-5 w-full sm:w-auto" onclick="startGame()"><i class="fas fa-play mr-2"></i> START ADVENTURE!</button>
+          <button class="cute-btn mint-btn mt-5 sm:ml-2 w-full sm:w-auto" onclick="openHowTo()"><i class="fas fa-circle-question mr-2"></i> How to Play</button>
+        </div>
+        <div class="relative text-center py-5">
+          <div class="absolute top-4 left-5 text-4xl float">⭐</div><div class="absolute top-10 right-8 text-4xl float" style="animation-delay:.8s">🐚</div>
+          <div class="text-8xl sm:text-9xl float">🏝️</div>
+          <div class="cute-card p-5 mx-auto mt-3 max-w-md">
+            <div class="text-5xl mb-2">🦀 🐬 🐠</div><p class="font-bold text-xl">Explore. Discover. Learn!</p><p class="text-sm mt-1">Can you find all 6 hidden objects?</p>
+          </div>
+          <div class="absolute bottom-3 right-7 text-4xl float" style="animation-delay:1.2s">🌈</div>
+        </div>
+      </div>
+      <div class="cute-card p-5 mt-7">
+        <div class="flex items-center justify-between gap-3 mb-4"><h2 class="text-xl font-bold"><i class="fas fa-star text-yellow-400 mr-2"></i>Top Beach Explorers</h2><button class="text-pink-500 font-bold underline" onclick="openLeaderboard()">View all</button></div>
+        <div id="homeLeaderboard" class="grid sm:grid-cols-3 gap-3"></div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen mt-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div><p class="text-sm text-pink-500 font-bold">WELCOME, <span id="greetingName">EXPLORER</span>!</p><h2 class="text-2xl sm:text-3xl font-bold">Find the Hidden Objects 🔎</h2></div>
+        <button class="cute-btn yellow-btn" onclick="openPause()"><i class="fas fa-pause mr-1"></i> Pause</button>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        <div class="cute-card p-3 text-center"><p class="text-xs sm:text-sm font-semibold text-gray-500">SCORE</p><p id="scoreDisplay" class="text-2xl font-bold text-pink-500">0</p></div>
+        <div class="cute-card p-3 text-center"><p class="text-xs sm:text-sm font-semibold text-gray-500">TIME LEFT</p><p id="timerDisplay" class="text-2xl font-bold text-purple-500">60s</p></div>
+        <div class="cute-card p-3 text-center"><p class="text-xs sm:text-sm font-semibold text-gray-500">LIVES</p><p id="livesDisplay" class="text-2xl"><i class="fas fa-heart life-heart"></i> <i class="fas fa-heart life-heart"></i> <i class="fas fa-heart life-heart"></i></p></div>
+        <div class="cute-card p-3 text-center"><p class="text-xs sm:text-sm font-semibold text-gray-500">FOUND</p><p id="foundDisplay" class="text-2xl font-bold text-emerald-500">0 / 6</p></div>
+      </div>
+      <div class="grid lg:grid-cols-[1fr_300px] gap-5 items-start">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-3"><p class="font-bold">🏖️ Beach Scene</p><p class="text-sm text-gray-500">Tap an object to collect it!</p></div>
+          <div id="beachScene" class="beach-scene" aria-label="Interactive beach scene">
+            <div class="sun"></div><div class="cloud" style="top:7%;left:12%">☁️</div><div class="cloud" style="top:15%;left:47%;font-size:35px">☁️</div>
+            <div class="palm">🌴</div><div class="umbrella">🏖️</div><div class="castle">🏰</div><div class="crab">🦀</div>
+          </div>
+          <div class="cute-card p-4 mt-4">
+            <div class="flex justify-between items-center gap-2 mb-3"><h3 class="font-bold"><i class="fas fa-basket-shopping text-pink-400 mr-2"></i>Your Beach Bag</h3><span class="text-xs text-gray-500">Drag items into the basket!</span></div>
+            <div id="inventory" class="flex flex-wrap gap-2 min-h-10"><span class="text-sm text-gray-400">Your collected items will appear here.</span></div>
+            <div id="dropZone" class="drop-zone p-4 mt-3 text-center" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropItem(event)">
+              <div class="text-3xl">🧺</div><p class="font-bold">Bonus Basket</p><p class="text-sm">Drag a collected item here for +5 bonus points!</p>
+            </div>
+          </div>
+        </div>
+        <aside class="cute-card p-4 sm:p-5">
+          <h3 class="text-xl font-bold mb-1">📝 Find These!</h3><p class="text-sm text-gray-500 mb-4">Look carefully around the beach.</p>
+          <div id="targetList" class="space-y-2"></div>
+          <div class="mt-5 rounded-2xl bg-pink-50 p-4"><div class="flex justify-between text-sm font-bold mb-2"><span>Adventure progress</span><span id="progressText">0%</span></div><div class="h-3 bg-pink-100 rounded-full overflow-hidden"><div id="progressBar" class="progress-fill" style="width:0%"></div></div></div>
+          <button class="cute-btn purple-btn w-full mt-4" onclick="showHint()"><i class="fas fa-lightbulb mr-2"></i> Give Me a Hint</button>
+          <button class="cute-btn yellow-btn w-full mt-3" onclick="openPause()"><i class="fas fa-pause mr-2"></i> Pause Game</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen mt-8">
+      <div class="cute-card max-w-2xl mx-auto p-7 sm:p-10 text-center">
+        <div id="resultEmoji" class="text-8xl mb-3">🏆</div><p id="resultLabel" class="text-pink-500 font-bold uppercase tracking-widest">Adventure complete!</p>
+        <h2 id="resultTitle" class="text-4xl sm:text-5xl font-bold mt-2">Amazing Job!</h2><p id="resultMessage" class="text-lg mt-3">You did a wonderful job.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-7">
+          <div class="rounded-2xl bg-pink-50 p-4"><p class="text-sm">Final Score</p><p id="finalScore" class="text-3xl font-bold text-pink-500">0</p></div>
+          <div class="rounded-2xl bg-purple-50 p-4"><p class="text-sm">Objects Found</p><p id="finalFound" class="text-3xl font-bold text-purple-500">0/6</p></div>
+          <div class="rounded-2xl bg-yellow-50 p-4 col-span-2 sm:col-span-1"><p class="text-sm">Time Left</p><p id="finalTime" class="text-3xl font-bold text-yellow-600">0s</p></div>
+        </div>
+        <div class="mt-7 flex flex-col sm:flex-row justify-center gap-3"><button class="cute-btn pink-btn text-lg" onclick="startGame()"><i class="fas fa-rotate-right mr-2"></i> Play Again</button><button class="cute-btn purple-btn text-lg" onclick="openLeaderboard()"><i class="fas fa-trophy mr-2"></i> Leaderboard</button><button class="cute-btn mint-btn text-lg" onclick="goHome()"><i class="fas fa-house mr-2"></i> Home</button></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="backdropClose(event)">
+    <div class="modal-panel">
+      <div class="flex items-start justify-between gap-3"><div><div id="modalEmoji" class="text-4xl mb-2">🌸</div><h2 id="modalTitle" class="text-2xl font-bold">Hello!</h2></div><button class="cute-btn !p-2 bg-white text-gray-500" onclick="closeModal()" aria-label="Close modal"><i class="fas fa-xmark"></i></button></div>
+      <div id="modalBody" class="mt-4"></div>
+      <div id="modalActions" class="mt-5 flex flex-wrap gap-2 justify-end"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script>
+    'use strict';
+
+    // Game data: each object is an item hidden in the beach scene.
+    const beachItems = [
+      { id:'shell', name:'Shell', emoji:'🐚', x:43, y:68, points:10, hint:'Look near the middle of the sandy beach.' },
+      { id:'ball', name:'Beach Ball', emoji:'🏐', x:65, y:78, points:10, hint:'Look on the right side of the sand.' },
+      { id:'starfish', name:'Starfish', emoji:'⭐', x:82, y:61, points:15, hint:'Look near the castle, on the right.' },
+      { id:'sunglasses', name:'Sunglasses', emoji:'🕶️', x:32, y:82, points:15, hint:'Look on the sand below the umbrella.' },
+      { id:'bucket', name:'Bucket', emoji:'🪣', x:54, y:56, points:20, hint:'Look near the water and sand.' },
+      { id:'fish', name:'Little Fish', emoji:'🐠', x:74, y:39, points:20, hint:'Look in the blue sea.' }
+    ];
+
+    const STORAGE_KEY = 'letsExploreBeachLeaderboard_v1';
+    let playerName = 'Explorer';
+    let score = 0;
+    let lives = 3;
+    let timeLeft = 60;
+    let foundItems = new Set();
+    let bonusItems = new Set();
+    let timerId = null;
+    let gameRunning = false;
+    let paused = false;
+    let soundEnabled = true;
+    let audioContext = null;
+    let hintIndex = 0;
+
+    const $ = id => document.getElementById(id);
+
+    function safeName(name) {
+      return String(name || 'Explorer').trim().slice(0, 18) || 'Explorer';
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, ch => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+      })[ch]);
+    }
+
+    function getLeaderboard() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        return Array.isArray(data) ? data.filter(x => x && typeof x.score === 'number') : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveScore() {
+      const board = getLeaderboard();
+      board.push({
+        name: playerName,
+        score,
+        found: foundItems.size,
+        date: new Date().toISOString()
+      });
+      board.sort((a, b) => b.score - a.score || b.found - a.found);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(board.slice(0, 10)));
+      } catch (e) {
+        showToast('Your browser could not save the score.');
+      }
+    }
+
+    function playSound(type='click') {
+      if (!soundEnabled) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!audioContext) audioContext = new AudioCtx();
+        if (audioContext.state === 'suspended') audioContext.resume();
+        const notes = type === 'success' ? [660, 880, 1040] :
+                      type === 'wrong' ? [220, 170] :
+                      type === 'win' ? [523, 659, 784, 1046] : [520];
+        notes.forEach((frequency, i) => {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = frequency;
+          gain.gain.setValueAtTime(0.0001, audioContext.currentTime + i * .09);
+          gain.gain.exponentialRampToValueAtTime(.12, audioContext.currentTime + i * .09 + .02);
+          gain.gain.exponentialRampToValueAtTime(.0001, audioContext.currentTime + i * .09 + .16);
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          osc.start(audioContext.currentTime + i * .09);
+          osc.stop(audioContext.currentTime + i * .09 + .18);
+        });
+      } catch (e) { /* Sound is optional; game remains playable. */ }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      $('soundToggle').innerHTML = soundEnabled
+        ? '<i class="fas fa-volume-high"></i><span class="hidden sm:inline ml-1">Sound</span>'
+        : '<i class="fas fa-volume-xmark"></i><span class="hidden sm:inline ml-1">Sound</span>';
+      showToast(soundEnabled ? 'Sound on! 🔊' : 'Sound off 🔇');
+      if (soundEnabled) playSound('click');
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      $(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startGame() {
+      clearInterval(timerId);
+      playerName = safeName($('playerName').value);
+      $('playerName').value = playerName;
+      score = 0; lives = 3; timeLeft = 60;
+      foundItems = new Set(); bonusItems = new Set(); hintIndex = 0;
+      gameRunning = true; paused = false;
+      $('greetingName').textContent = playerName.toUpperCase();
+      showScreen('gameScreen');
+      renderScene(); renderTargets(); renderInventory(); updateHUD();
+      playSound('click');
+      timerId = setInterval(() => {
+        if (!gameRunning || paused) return;
+        timeLeft--;
+        updateHUD();
+        if (timeLeft <= 0) endGame(false, 'Time is up! Try again to find more objects.');
+      }, 1000);
+    }
+
+    function renderScene() {
+      const scene = $('beachScene');
+      scene.querySelectorAll('.scene-object').forEach(el => el.remove());
+      beachItems.forEach(item => {
+        const button = document.createElement('button');
+        button.className = 'scene-object' + (foundItems.has(item.id) ? ' found' : '');
+        button.type = 'button';
+        button.style.left = item.x + '%';
+        button.style.top = item.y + '%';
+        button.dataset.id = item.id;
+        button.setAttribute('aria-label', foundItems.has(item.id) ? item.name + ' found' : 'Hidden object');
+        button.innerHTML = '<span>' + item.emoji + '</span><span class="hint-dot"></span>';
+        button.addEventListener('click', () => collectItem(item.id));
+        scene.appendChild(button);
+      });
+    }
+
+    function renderTargets() {
+      $('targetList').innerHTML = beachItems.map(item => {
+        const done = foundItems.has(item.id);
+        return `<div class="target-row ${done ? 'done' : ''}">
+          <span class="target-icon">${done ? '✅' : '❔'}</span>
+          <div class="min-w-0 flex-1"><p class="font-bold ${done ? 'line-through text-emerald-700' : ''}">${escapeHTML(item.name)}</p>
+          <p class="text-xs text-gray-500">${done ? 'Found! +' + item.points + ' points' : item.points + ' points'}</p></div>
+          ${done ? '<i class="fas fa-check-circle text-emerald-500"></i>' : '<i class="fas fa-magnifying-glass text-pink-300"></i>'}
+        </div>`;
+      }).join('');
+    }
+
+    function collectItem(id) {
+      if (!gameRunning || paused || foundItems.has(id)) return;
+      const item = beachItems.find(x => x.id === id);
+      if (!item) return;
+      foundItems.add(id);
+      score += item.points;
+      playSound('success');
+      renderScene(); renderTargets(); renderInventory(); updateHUD();
+      showToast(`Great find! ${item.emoji} +${item.points} points!`);
+      if (foundItems.size === beachItems.length) {
+        setTimeout(() => endGame(true, 'You found every hidden object. You are a beach superstar!'), 450);
+      }
+    }
+
+    function renderInventory() {
+      const collected = beachItems.filter(item => foundItems.has(item.id));
+      $('inventory').innerHTML = collected.length
+        ? collected.map(item => `<button class="inventory-item" draggable="true" data-item="${item.id}" aria-label="Drag ${item.name} for a bonus">
+            <span class="text-xl">${item.emoji}</span><span class="text-sm font-semibold">${escapeHTML(item.name)}</span>
+          </button>`).join('')
+        : '<span class="text-sm text-gray-400">Your collected items will appear here.</span>';
+      $('inventory').querySelectorAll('.inventory-item').forEach(el => {
+        el.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', el.dataset.item);
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        // Touch-friendly alternative for devices without drag-and-drop.
+        el.addEventListener('click', () => {
+          if (foundItems.has(el.dataset.item)) useBonusBasket(el.dataset.item);
+        });
+      });
+    }
+
+    function allowDrop(event) {
+      event.preventDefault();
+      $('dropZone').classList.add('drag-over');
+    }
+    function leaveDrop() { $('dropZone').classList.remove('drag-over'); }
+    function dropItem(event) {
+      event.preventDefault();
+      leaveDrop();
+      const id = event.dataTransfer.getData('text/plain');
+      useBonusBasket(id);
+    }
+
+    function useBonusBasket(id) {
+      if (!gameRunning || !foundItems.has(id) || bonusItems.has(id)) {
+        if (bonusItems.has(id)) showToast('You already used this item for a bonus!');
+        return;
+      }
+      bonusItems.add(id);
+      score += 5;
+      updateHUD();
+      renderInventory();
+      playSound('success');
+      showToast('Basket bonus! +5 points 🧺');
+      $('dropZone').querySelector('p').textContent = `${bonusItems.size} item(s) used. Try another!`;
+    }
+
+    function updateHUD() {
+      $('scoreDisplay').textContent = score;
+      $('timerDisplay').textContent = timeLeft + 's';
+      $('timerDisplay').classList.toggle('text-red-500', timeLeft <= 10);
+      $('livesDisplay').innerHTML = [0,1,2].map(i =>
+        `<i class="fas fa-heart life-heart ${i >= lives ? 'lost' : ''}"></i>`
+      ).join(' ');
+      $('foundDisplay').textContent = `${foundItems.size} / ${beachItems.length}`;
+      const pct = Math.round(foundItems.size / beachItems.length * 100);
+      $('progressText').textContent = pct + '%';
+      $('progressBar').style.width = pct + '%';
+    }
+
+    function showHint() {
+      if (!gameRunning || paused) return;
+      const remaining = beachItems.filter(x => !foundItems.has(x.id));
+      if (!remaining.length) return;
+      const item = remaining[hintIndex % remaining.length];
+      hintIndex++;
+      const button = $('beachScene').querySelector(`[data-id="${item.id}"]`);
+      if (button) {
+        button.animate([{transform:'scale(1)'},{transform:'scale(1.45) rotate(12deg)'},{transform:'scale(1)'}], {duration:700, iterations:2});
+        button.style.background = '#fff3a6';
+        setTimeout(() => { if (button.isConnected) button.style.background = ''; }, 1500);
+      }
+      showToast('Hint: ' + item.hint);
+      playSound('click');
+    }
+
+    function loseLife() {
+      if (!gameRunning || paused) return;
+      lives--;
+      updateHUD();
+      playSound('wrong');
+      if (lives <= 0) endGame(false, 'Oh no! You used all 3 lives. Have another go!');
+    }
+
+    function endGame(success, message) {
+      if (!gameRunning) return;
+      gameRunning = false;
+      clearInterval(timerId);
+      saveScore();
+      playSound(success ? 'win' : 'wrong');
+      $('resultEmoji').textContent = success ? '🏆' : (timeLeft <= 0 ? '⏰' : '💗');
+      $('resultLabel').textContent = success ? 'Beach superstar!' : 'Adventure finished';
+      $('resultTitle').textContent = success ? 'Amazing Job!' : 'Good Try!';
+      $('resultMessage').textContent = message;
+      $('finalScore').textContent = score;
+      $('finalFound').textContent = `${foundItems.size}/${beachItems.length}`;
+      $('finalTime').textContent = timeLeft + 's';
+      showScreen('resultScreen');
+    }
+
+    function showModal(title, emoji, body, actions=[]) {
+      $('modalTitle').textContent = title;
+      $('modalEmoji').textContent = emoji;
+      $('modalBody').innerHTML = body;
+      $('modalActions').innerHTML = '';
+      actions.forEach(action => {
+        const button = document.createElement('button');
+        button.className = 'cute-btn ' + (action.className || 'pink-btn');
+        button.textContent = action.label;
+        button.onclick = action.onClick;
+        $('modalActions').appendChild(button);
+      });
+      $('modalBackdrop').classList.add('show');
+    }
+    function closeModal() { $('modalBackdrop').classList.remove('show'); }
+    function backdropClose(event) { if (event.target === $('modalBackdrop')) closeModal(); }
+
+    function openHowTo() {
+      showModal('How to Play', '🎮', `
+        <div class="space-y-3 text-base">
+          <p>🔎 <b>1. Find objects:</b> Tap the hidden beach objects in the picture.</p>
+          <p>❤️ <b>2. Keep your lives:</b> You have 3 lives for your adventure.</p>
+          <p>⏱️ <b>3. Beat the timer:</b> Find all 6 objects within 60 seconds.</p>
+          <p>🧺 <b>4. Bonus basket:</b> Drag collected items into the basket for +5 points. On a phone, tap a collected item instead.</p>
+          <p>💡 <b>5. Need help?</b> Press the hint button to get a clue.</p>
+        </div>`, [{label:'Got it!',className:'pink-btn',onClick:closeModal}]);
+    }
+
+    function openPause() {
+      if (!gameRunning) return;
+      paused = true;
+      showModal('Take a Little Break', '🌸', '<p class="text-lg">Your adventure is paused. Take a breath, explorer!</p><p class="mt-2 text-sm text-gray-500">Your timer will stop while this window is open.</p>', [
+        {label:'Resume Game',className:'pink-btn',onClick:() => {paused=false;closeModal();}},
+        {label:'Restart',className:'yellow-btn',onClick:() => {closeModal();startGame();}},
+        {label:'Quit',className:'mint-btn',onClick:() => {paused=false;gameRunning=false;clearInterval(timerId);closeModal();goHome();}}
+      ]);
+    }
+
+    function openLeaderboard() {
+      const board = getLeaderboard();
+      const rows = board.length ? board.map((entry, i) => `
+        <div class="flex items-center gap-3 rounded-xl p-3 ${i===0?'bg-yellow-50':i===1?'bg-purple-50':'bg-white'} border border-pink-100">
+          <span class="text-xl w-8">${['🥇','🥈','🥉'][i] || (i+1)+'.'}</span>
+          <div class="flex-1 min-w-0"><p class="font-bold truncate">${escapeHTML(entry.name || 'Explorer')}</p><p class="text-xs text-gray-500">${entry.found || 0}/6 objects found</p></div>
+          <span class="font-bold text-pink-500">${entry.score} pts</span>
+        </div>`).join('') : '<div class="text-center py-7"><div class="text-5xl mb-3">🏖️</div><p class="font-bold">No scores yet!</p><p class="text-sm text-gray-500 mt-1">Play a game to appear on the leaderboard.</p></div>';
+      showModal('Beach Explorer Leaderboard', '🏆', `<div class="space-y-2">${rows}</div><p class="text-xs text-gray-400 mt-4">Your top 10 scores are saved on this browser using localStorage.</p>`, [
+        ...(board.length ? [{label:'Clear Scores',className:'yellow-btn',onClick:confirmClearScores}] : []),
+        {label:'Close',className:'pink-btn',onClick:closeModal}
+      ]);
+    }
+
+    function confirmClearScores() {
+      showModal('Clear all scores?', '🧹', '<p>Are you sure you want to remove all saved leaderboard scores from this browser?</p>', [
+        {label:'Keep Scores',className:'mint-btn',onClick:openLeaderboard},
+        {label:'Yes, Clear',className:'pink-btn',onClick:() => {
+          localStorage.removeItem(STORAGE_KEY);
+          closeModal(); renderHomeLeaderboard(); showToast('Leaderboard cleared.');
+        }}
+      ]);
+    }
+
+    function renderHomeLeaderboard() {
+      const board = getLeaderboard().slice(0,3);
+      $('homeLeaderboard').innerHTML = board.length ? board.map((x,i) => `
+        <div class="rounded-2xl bg-pink-50 p-4 flex items-center gap-3">
+          <span class="text-3xl">${['🥇','🥈','🥉'][i]}</span><div class="min-w-0 flex-1"><p class="font-bold truncate">${escapeHTML(x.name)}</p><p class="text-sm text-gray-500">${x.found}/6 objects</p></div><p class="font-bold text-pink-500">${x.score}</p>
+        </div>`).join('') : '<p class="text-gray-500 text-sm sm:col-span-3">Your name could be here. Start an adventure!</p>';
+    }
+
+    function goHome() {
+      clearInterval(timerId);
+      gameRunning = false;
+      paused = false;
+      closeModal();
+      renderHomeLeaderboard();
+      showScreen('startScreen');
+    }
+
+    let toastTimeout;
+    function showToast(message) {
+      const toast = $('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 2300);
+    }
+
+    // Keyboard accessibility: Escape closes a modal.
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && $('modalBackdrop').classList.contains('show')) closeModal();
+    });
+
+    $('playerName').addEventListener('keydown', event => {
+      if (event.key === 'Enter') startGame();
+    });
+
+    // Initialise the landing page and saved leaderboard.
+    renderHomeLeaderboard();
+  </script>
+</body>
+</html>
